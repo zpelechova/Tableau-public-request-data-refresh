@@ -1,0 +1,34 @@
+{
+  "title": "PuppeteerCrawler Template",
+  "description": "lorem ipsum",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "url": {
+      "title": "URL",
+      "type": "string",
+      "description": "Tableau public URL where you want to update the dashboard/ request data update automatically.",
+      "editor": "textfield",
+      "prefill": "https://public.tableau.com/app/profile/alena.me.ov./viz/TOP_SLEVY/Dashboard1"
+    },
+    "email": {
+      "title": "Email",
+      "type": "string",
+      "description": "Email to your account in Tableau public.",
+      "editor": "textfield",
+      "example": "zuzka@apify.com"
+    },
+    "password": {
+      "title": "Password",
+      "type": "string",
+      "description": "Password to your account in Tableau public.",
+      "editor": "textfield",
+      "example": "zuzka's_password_to_tableau"
+    }
+  },
+  "required": [
+    "url",
+    "email",
+    "password"
+  ]
+}
