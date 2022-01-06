@@ -1,33 +1,3 @@
-# PuppeteerCrawler project
+### Features
 
-This template is a production ready boilerplate for developing with `PuppeteerCrawler`.
-Use this to bootstrap your projects using the most up-to-date code.
-
-If you're looking for examples or want to learn more visit:
-
-- [Documentation](https://sdk.apify.com/docs/api/puppeteer-crawler)
-- [Examples](https://sdk.apify.com/docs/examples/puppeteer-crawler)
-
-## Documentation reference
-
-- [Apify SDK](https://sdk.apify.com/)
-- [Apify Actor documentation](https://docs.apify.com/actor)
-- [Apify CLI](https://docs.apify.com/cli)
-
-## Writing a README
-
-See our tutorial on [writing READMEs for your actors](https://help.apify.com/en/articles/2912548-how-to-write-great-readme-for-your-actors) if you need more inspiration.
-
-### Table of contents
-
-If your README requires a table of contents, use the template below and make sure to keep the `<!-- toc start -->` and `<!-- toc end -->` markers.
-
-<!-- toc start -->
-- Introduction
-- Use Cases
-  - Case 1
-  - Case 2
-- Input
-- Output
-- Miscellaneous
- <!-- toc end -->
+Do you have a Tableau repository conected with Snowflake and it is not enought for you to update the data behind your dashboard once a day especially when you cannot set when to do it? This actor is here to solve this exact problem. You provide URL for the dashboard which you want to update more frequently and credentials to you Tableau Public account and the actor sign in as you and request data refresh on its own. You can schedule it to run every hour or even every 10 minutes! 
