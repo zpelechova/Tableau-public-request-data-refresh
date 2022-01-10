@@ -9,7 +9,7 @@ Apify.main(async () => {
     const crawler = new Apify.PuppeteerCrawler({
         requestList,
         handlePageFunction: async (context) => {
-            const { url, email, password } = context.request;
+            const { url } = context.request;
 
             log.info('Page opened.', { url });
 
