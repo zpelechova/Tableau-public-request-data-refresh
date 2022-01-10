@@ -9,21 +9,21 @@
       "type": "string",
       "description": "Tableau public URL where you want to update the dashboard/ request data update automatically.",
       "editor": "textfield",
-      "prefill": "https://public.tableau.com/app/profile/alena.me.ov./viz/TOP_SLEVY/Dashboard1"
+      "prefill": "https://public.tableau.com/app/profile/pablolgomez/viz/HappinessintheWorld_16245341657220/WHR"
     },
     "email": {
       "title": "Email",
       "type": "string",
       "description": "Email to your account in Tableau public.",
       "editor": "textfield",
-      "example": "zuzka@apify.com"
+      "prefill": "my.email@example.com"
     },
     "password": {
       "title": "Password",
       "type": "string",
       "description": "Password to your account in Tableau public.",
       "editor": "textfield",
-      "example": "zuzka's_password_to_tableau"
+      "prefill": "my_password_to_tableau"
     }
   },
   "required": [
