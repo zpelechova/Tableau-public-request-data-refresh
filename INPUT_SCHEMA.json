@@ -1,6 +1,6 @@
 {
   "title": "PuppeteerCrawler Template",
-  "description": "lorem ipsum",
+  "description": "Fill in URL of you dashboards and you credentials on Tableu Public and the actor will request data refresh for you.",
   "type": "object",
   "schemaVersion": 1,
   "properties": {
