@@ -1,37 +1,16 @@
 const Apify = require('apify');
-
-const { utils: { log } } = Apify;
+const { utils: { log, puppeteer } } = Apify;
 
 Apify.main(async () => {
-    // const { url, email, password } = await Apify.getInput();
+    const { url, email, password } = await Apify.getInput();
 
-    // const input = await Apify.getInput();
-    const input= {
-        "url": ["https://public.tableau.com/app/profile/alena.me.ov./viz/TOP_SLEVY/Dashboard1"],
-        "email": "aja.mecirova@gmail.com",
-        "password": "Czechitas2021*"
-      }
-
-    const url = input.url;
-    // const email = input.email;
-    // const password = input.password;
-
-    const requestList = await Apify.openRequestList('start-urls', url);
-    // const requestQueue = await Apify.openRequestQueue();
-    // const proxyConfiguration = await Apify.createProxyConfiguration();
+    const requestList = await Apify.openRequestList('start-urls', [url]);
 
     const crawler = new Apify.PuppeteerCrawler({
         requestList,
         handlePageFunction: async (context) => {
-            const { url } = context.request;
-            const input= {
-                "url": ["https://public.tableau.com/app/profile/alena.me.ov./viz/TOP_SLEVY/Dashboard1"],
-                "email": "aja.mecirova@gmail.com",
-                "password": "Czechitas2021*"
-              }
-        
-            const email = input.email;
-            const password = input.password;
+            const { url, email, password } = context.request;
+
             log.info('Page opened.', { url });
 
             console.log('Launching Puppeteer...');
@@ -43,7 +22,7 @@ Apify.main(async () => {
             await page.type('#email', email, { delay: 100 });
             await page.type('#password', password, { delay: 100 });
             await page.waitForTimeout(5000);
-            // await page.injectJQuery();
+            await puppeteer.injectJQuery(page);
             await page.evaluate(() => { $('button:contains(Sign In)').click(); });
             console.log('Signed in...');
         
