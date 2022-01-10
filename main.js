@@ -1,32 +1,44 @@
 const Apify = require('apify');
-const { puppeteer } = Apify.utils;
+const { utils: { log, puppeteer } } = Apify;
 
 Apify.main(async () => {
-    const input = await Apify.getInput();
+    const { url, email, password } = await Apify.getInput();
 
-    const url = input.url;
-    const email = input.email;
-    const password = input.password;
+    const requestList = await Apify.openRequestList('start-urls', [url]);
 
-    console.log('Launching Puppeteer...');
-    const browser = await Apify.launchPuppeteer({});
+    const crawler = new Apify.PuppeteerCrawler({
+        requestList,
+        handlePageFunction: async (context) => {
+            const { url } = context.request;
 
-    console.log('Signing in ...');
-    const page = await browser.newPage();
-    await page.goto(`${url}?authMode=signIn`, { waitUntil: 'networkidle2' });
-    await page.type('#email', email, { delay: 100 });
-    await page.type('#password', password, { delay: 100 });
-    await page.waitForTimeout(5000);
-    await puppeteer.injectJQuery(page);
-    await page.evaluate(() => { $('button:contains(Sign In)').click(); });
-    console.log('Signed in...');
+            log.info('Page opened.', { url });
 
-    console.log('Requesting Data Refresh');
-    await page.waitForTimeout(10000);
-    await page.goto(url, { waitUntil: 'networkidle2' });
-    await puppeteer.injectJQuery(page);
-    await page.evaluate(() => { $('button:contains(Request Data Refresh)').click(); });
-    console.log('Done.');
+            console.log('Launching Puppeteer...');
+            const browser = await Apify.launchPuppeteer({});
+        
+            console.log('Signing in ...');
+            const page = await browser.newPage();
+            await page.goto(`${url}?authMode=signIn`, { waitUntil: 'networkidle2' });
+            await page.type('#email', email, { delay: 100 });
+            await page.type('#password', password, { delay: 100 });
+            await page.waitForTimeout(5000);
+            await puppeteer.injectJQuery(page);
+            await page.evaluate(() => { $('button:contains(Sign In)').click(); });
+            console.log('Signed in...');
+        
+            console.log('Requesting Data Refresh');
+            await page.waitForTimeout(10000);
+            await page.goto(url, { waitUntil: 'networkidle2' });
+            await puppeteer.injectJQuery(page);
+            await page.evaluate(() => { $('button:contains(Request Data Refresh)').click(); });
+            console.log('Done.');
+        
+            await browser.close();
 
-    await browser.close();
+        },
+    });
+
+    log.info('Starting the crawl.');
+    await crawler.run();
+    log.info('Crawl finished.');
 });
