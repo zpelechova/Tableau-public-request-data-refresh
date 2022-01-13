@@ -1,67 +1,58 @@
-const Apify = require('apify')
-const {
-    utils: { log, puppeteer }
-} = Apify
+const Apify = require('apify');
+
+const { utils: { log, puppeteer, sleep } } = Apify;
 
 Apify.main(async () => {
-    const { url, email, password } = await Apify.getInput()
+    const { url, email, password } = await Apify.getInput();
+    const loginUrl = `${url}?authMode=signIn`;
 
-    const requestList = await Apify.openRequestList('start-urls', [url])
+    const requestList = await Apify.openRequestList(null, [loginUrl]);
 
     const crawler = new Apify.PuppeteerCrawler({
         requestList,
-        handlePageFunction: async context => {
-            const { url } = context.request
+        handlePageFunction: async ({ page, request }) => {
+            await puppeteer.injectJQuery(page);
 
-            log.info('Page opened.', { url })
+            log.info('Login page opened.', { url: request.url });
+            log.info('Signing in...');
 
-            console.log('Launching Puppeteer...')
-            const browser = await Apify.launchPuppeteer({})
+            await page.type('#email', email, { delay: 100 });
+            await page.type('#password', password, { delay: 100 });
+            await sleep(5000);
 
-            console.log('Signing in ...')
-            const page = await browser.newPage()
-            await page.goto(`${url}?authMode=signIn`, {
-                waitUntil: 'networkidle2'
-            })
-            await page.type('#email', email, { delay: 100 })
-            await page.type('#password', password, { delay: 100 })
-            await page.waitForTimeout(5000)
-            await puppeteer.injectJQuery(page)
-            await page.evaluate(() => {
-                $('button:contains(Sign In)').click()
-            })
-            await page.waitForTimeout(5000)
-            const signinError = await page.evaluate(
-                () => $('.SignInForm_authError__3LVX_').length
-            )
-            if (signinError === 1) {
-                console.log(
-                    'You used invalid email or password, the authentification failed, aborting the run.'
-                )
-            }
-            if (signinError === 0) {
-                console.log('Signed in...')
-                await page.waitForTimeout(5000)
-                await page.goto(url, { waitUntil: 'networkidle2' })
-                await puppeteer.injectJQuery(page)
-                const refreshButton = await page.evaluate(
-                    () => $('button:contains(Request Data Refresh)').length
-                )
-                if (refreshButton === 1) {
-                    console.log('Requesting Data Refresh')
-                    await page.evaluate(() => {
-                        $('button:contains(Request Data Refresh)').click()
-                    })
-                    console.log('Data refresh requested.')
+            await page.evaluate(() => $('button:contains(Sign In)').click()); // eslint-disable-line
+            await sleep(5000);
+
+            const loginSuccessful = await page.evaluate(() => !$('.SignInForm_authError__3LVX_').length); // eslint-disable-line
+            if (loginSuccessful) {
+                log.info('Signed in.');
+                log.info('Navigating to dashboard...');
+                await sleep(5000);
+
+                await page.goto(url, { waitUntil: 'networkidle2' });
+                log.info('Dashboard opened.', { url });
+                await puppeteer.injectJQuery(page);
+
+                const refreshButtonAvailable = await page.evaluate(() => $('button:contains(Request Data Refresh)').length); // eslint-disable-line
+                if (refreshButtonAvailable) {
+                    log.info('Requesting Data Refresh...');
+                    await page.evaluate(() => $('button:contains(Request Data Refresh)').click()); // eslint-disable-line
+                    log.info('Data refresh requested.');
                 } else {
-                    console.log('The button for data refresh cannot be found on the page. Make sure your dashboard has this feature and/or try again.')
+                    log.error('The button for data refresh cannot be found on the page. Make sure your dashboard has this feature and/or try again.');
                 }
+            } else {
+                log.error('You used invalid email or password, the authentication failed, aborting the run.');
             }
-            await browser.close()
-        }
-    })
+        },
+        preNavigationHooks: [
+            async (crawlingContext, gotoOptions) => {
+                gotoOptions.waitUntil = 'networkidle2';
+            },
+        ],
+    });
 
-    log.info('The process has started.')
-    await crawler.run()
-    log.info('The process has finished.')
-})
+    log.info('The process has started.');
+    await crawler.run();
+    log.info('The process has finished.');
+});
