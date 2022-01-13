@@ -42,6 +42,7 @@ Apify.main(async () => {
                     throw new Error('The button for data refresh cannot be found on the page. Make sure your dashboard has this feature and/or try again.');
                 }
             } else {
+                request.noRetry = true;
                 throw new Error('You used invalid email or password, the authentication failed, aborting the run.');
             }
         },
