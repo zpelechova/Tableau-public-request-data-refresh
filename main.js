@@ -39,10 +39,11 @@ Apify.main(async () => {
                     await page.evaluate(() => $('button:contains(Request Data Refresh)').click()); // eslint-disable-line
                     log.info('Data refresh requested.');
                 } else {
-                    log.error('The button for data refresh cannot be found on the page. Make sure your dashboard has this feature and/or try again.');
+                    throw new Error('The button for data refresh cannot be found on the page. Make sure your dashboard has this feature and/or try again.');
                 }
             } else {
-                log.error('You used invalid email or password, the authentication failed, aborting the run.');
+                request.noRetry = true;
+                throw new Error('You used invalid email or password, the authentication failed, aborting the run.');
             }
         },
         preNavigationHooks: [
