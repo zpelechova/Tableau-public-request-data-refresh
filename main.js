@@ -40,7 +40,7 @@ Apify.main(async () => {
                 await puppeteer.injectJQuery(page)
 
                 const refreshButtonAvailable = await page.evaluate(
-                    () => $('button:contains(RequestDataRefresh)').length
+                    () => $('button:contains(Request Data Refresh)').length
                 ) // eslint-disable-line
                 if (refreshButtonAvailable) {
                     log.info('Requesting Data Refresh...')
