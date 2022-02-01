@@ -24,6 +24,7 @@ Apify.main(async () => {
             await sleep(5000);
 
             const loginSuccessful = await page.evaluate(() => !$('.SignInForm_authError__3LVX_').length); // eslint-disable-line
+            let retries = 3;
             if (loginSuccessful) {
                 log.info('Signed in.');
                 log.info('Navigating to dashboard...');
@@ -39,11 +40,17 @@ Apify.main(async () => {
                     await page.evaluate(() => $('button:contains(Request Data Refresh)').click()); // eslint-disable-line
                     log.info('Data refresh requested.');
                 } else {
+                    retries -= 1;
                     throw new Error('The button for data refresh cannot be found on the page. Make sure your dashboard has this feature and/or try again.');
                 }
             } else {
                 request.noRetry = true;
                 log.error('You used invalid email or password, the authentication failed, aborting the run.');
+                process.exit(1);
+            }
+            
+            if  (retries >= 0) {
+                log.error('It seems the button to refresh data were not found three times. Not going to try again.');
                 process.exit(1);
             }
         },
