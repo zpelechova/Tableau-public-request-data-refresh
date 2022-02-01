@@ -34,7 +34,7 @@ Apify.main(async () => {
                 log.info('Dashboard opened.', { url });
                 await puppeteer.injectJQuery(page);
 
-                const refreshButtonAvailable = await page.evaluate(() => $('button:contains(Request Data Refresh)').length); // eslint-disable-line
+                const refreshButtonAvailable = await page.evaluate(() => $('button:contains(RequestDataRefresh)').length); // eslint-disable-line
                 if (refreshButtonAvailable) {
                     log.info('Requesting Data Refresh...');
                     await page.evaluate(() => $('button:contains(Request Data Refresh)').click()); // eslint-disable-line
