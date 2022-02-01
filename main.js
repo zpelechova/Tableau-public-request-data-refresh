@@ -4,6 +4,8 @@ const {
     utils: { log, puppeteer, sleep }
 } = Apify
 
+let retries = 3
+
 Apify.main(async () => {
     const { url, email, password } = await Apify.getInput()
     const loginUrl = `${url}?authMode=signIn`
@@ -28,7 +30,6 @@ Apify.main(async () => {
             const loginSuccessful = await page.evaluate(
                 () => !$('.SignInForm_authError__3LVX_').length
             ) // eslint-disable-line
-            let retries = 3
             if (loginSuccessful) {
                 log.info('Signed in.')
                 log.info('Navigating to dashboard...')
