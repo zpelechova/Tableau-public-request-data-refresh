@@ -43,7 +43,8 @@ Apify.main(async () => {
                 }
             } else {
                 request.noRetry = true;
-                throw new Error('You used invalid email or password, the authentication failed, aborting the run.');
+                log.error('You used invalid email or password, the authentication failed, aborting the run.');
+                process.exit(1);
             }
         },
         preNavigationHooks: [
